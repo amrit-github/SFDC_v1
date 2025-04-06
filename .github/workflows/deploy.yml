@@ -19,7 +19,7 @@ jobs:
 
       - name: Authenticate with JWT
         run: |
-          echo "${{ secrets.SF_JWT_KEY }}" > server.key
+          echo "${{ secrets.SF_JWT_KEY }}" | tr -d '\r' > server.key
           sfdx force:auth:jwt:grant \
             --clientid ${{ secrets.SF_CONSUMER_KEY }} \
             --jwtkeyfile server.key \
@@ -29,4 +29,4 @@ jobs:
 
       - name: Deploy to Org
         run: |
-          sfdx force:source:deploy -p force-app\main\default\classes -u SFDC_v1 --checkonly --testlevel RunLocalTests
+          sfdx force:source:deploy -p force-app/main/default/classes -u SFDC_v1 --checkonly --testlevel RunLocalTests
