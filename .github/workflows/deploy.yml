@@ -15,7 +15,7 @@ jobs:
 
       - name: Install Salesforce CLI
         run: |
-          npm install sfdx-cli --global
+          npm install -g @salesforce/cli
 
       - name: Test SFDX CLI
         run: |
