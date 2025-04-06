@@ -29,4 +29,4 @@ jobs:
 
       - name: Deploy to Org
         run: |
-          sfdx force:source:deploy -p force-app\main\default\classes -u ci-org --checkonly --testlevel RunLocalTests
+          sfdx force:source:deploy -p force-app\main\default\classes -u SFDC_v1 --checkonly --testlevel RunLocalTests
