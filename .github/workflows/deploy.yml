@@ -33,7 +33,7 @@ jobs:
         id: changes
         run: |
           git fetch origin master
-          CHANGED_FILES=$(git diff --name-only origin/master ${{ github.sha }} -- 'force-app/main/default' | grep -E '\.(cls|trigger|page|component|js|html|xml)$' || true)
+          CHANGED_FILES=$(git diff --name-only origin/master ${{ github.sha }} -- 'force-app/main/default/classes' | grep -E '\.(cls|trigger|page|component|js|html|xml)$' || true)
           CHANGED_PATHS=$(echo "$CHANGED_FILES" | xargs)
           echo "Changed paths: $CHANGED_PATHS"
           echo "changed_paths=$CHANGED_PATHS" >> $GITHUB_OUTPUT
