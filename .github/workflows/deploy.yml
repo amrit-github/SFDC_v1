@@ -1,4 +1,4 @@
-name: SFDC Smoke Test
+name: SFDC CI Deploy
 
 on:
   push:
@@ -6,46 +6,49 @@ on:
       - master
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # full history to support git diff
 
       - name: Install Salesforce CLI
-        run: |
-          npm install -g @salesforce/cli
+        run: npm install -g @salesforce/cli
 
-      - name: Test SFDX CLI
+      - name: Authenticate to Salesforce (JWT)
         run: |
           echo "${{ secrets.SF_JWT_KEY }}" > server.key
-          sfdx auth:jwt:grant \
-            --clientid ${{ secrets.SF_CONSUMER_KEY }} \
-            --jwtkeyfile server.key \
+          sf org login jwt \
+            --client-id ${{ secrets.SF_CONSUMER_KEY }} \
+            --jwt-key-file server.key \
             --username ${{ secrets.SF_USERNAME }} \
-            --instanceurl ${{ secrets.SF_SERVER_URL }} \
-            --setalias SFDC_v1
-      
+            --instance-url ${{ secrets.SF_SERVER_URL }} \
+            --alias SFDC_v1 \
+            --set-default
+
+      - name: Debug Git Log
+        run: |
+          echo "Last 5 commits:"
+          git log --oneline -5
+
       - name: Detect Changed Metadata Files
         id: changes
         run: |
-          git fetch origin master
-          CHANGED_FILES=$(git diff --name-only origin/master ${{ github.sha }} -- 'force-app/main/default/classes' | grep -E '\.(cls|trigger|page|component|js|html|xml)$' || true)
+          echo "Detecting changes in 'force-app/main/default'..."
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'force-app/main/default' | grep -E '\.(cls|trigger|page|component|js|html|xml)$' || true)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
           CHANGED_PATHS=$(echo "$CHANGED_FILES" | xargs)
-          echo "Changed paths: $CHANGED_PATHS"
-          echo "changed_paths=$CHANGED_PATHS" >> $GITHUB_OUTPUT
-      
-      - name: Debug Changed Paths
-        run: |
-          echo "Files to deploy:"
-          echo "${{ steps.changes.outputs.changed_paths }}"
-    
+          echo "changed_paths=$CHANGED_PATHS" >> "$GITHUB_OUTPUT"
+
       - name: Deploy Changed Files
         if: steps.changes.outputs.changed_paths != ''
         run: |
+          echo "Deploying only changed files:"
+          echo "${{ steps.changes.outputs.changed_paths }}"
           sf project deploy start \
             --source-dir ${{ steps.changes.outputs.changed_paths }} \
             --target-org SFDC_v1 \
