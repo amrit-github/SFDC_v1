@@ -32,12 +32,21 @@ jobs:
         run: |
           git fetch origin master
           CHANGED_FILES=$(git diff --name-only origin/master ${{ github.sha }} -- 'force-app/main/default' | grep -E '\.(cls|trigger|page|component|js|html|xml)$' || true)
-          echo "$CHANGED_FILES" > changed.txt
-          echo "changed_paths=$(cat changed.txt | xargs)" >> $GITHUB_OUTPUT
+          CHANGED_PATHS=$(echo "$CHANGED_FILES" | xargs)
+          echo "Changed paths: $CHANGED_PATHS"
+          echo "changed_paths=$CHANGED_PATHS" >> $GITHUB_OUTPUT
+      
+      - name: Debug Changed Paths
+        run: |
+          echo "Files to deploy:"
+          echo "${{ steps.changes.outputs.changed_paths }}"
     
       - name: Deploy Changed Files
         if: steps.changes.outputs.changed_paths != ''
         run: |
-          echo "Deploying only changed files:"
-          echo "${{ steps.changes.outputs.changed_paths }}"
-          sf project deploy start --source-dir ${{ steps.changes.outputs.changed_paths }} --target-org SFDC_v1 --wait 10 --ignore-conflicts --verbose
+          sf project deploy start \
+            --source-dir ${{ steps.changes.outputs.changed_paths }} \
+            --target-org SFDC_v1 \
+            --wait 10 \
+            --ignore-conflicts \
+            --verbose
