@@ -1,0 +1,42 @@
+<apex:page showHeader="false" sidebar="false" docType="html-5.0"
+           contentType="text/html" standardStylesheets="false"
+           applyHtmlTag="false">
+
+    <html>
+        <head>
+            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        </head>
+        <body>
+            <script>
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get("orderId");
+                const amount = urlParams.get("amount");
+                const key = urlParams.get("key");
+
+                var options = {
+                    key: key,
+                    amount: parseInt(amount), // in paise
+                    currency: "INR",
+                    name: "Salesforce Payment",
+                    description: "Test payment from Salesforce",
+                    order_id: orderId,
+                    handler: function (response) {
+                        alert("✅ Payment Successful!\\nPayment ID: " + response.razorpay_payment_id);
+                        window.close();
+                    },
+                    prefill: {
+                        name: "Test User",
+                        email: "test@example.com"
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    }
+                };
+
+                var rzp = new Razorpay(options);
+                rzp.open();
+            </script>
+        </body>
+    </html>
+
+</apex:page>
