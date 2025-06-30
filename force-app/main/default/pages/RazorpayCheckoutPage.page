@@ -1,4 +1,4 @@
-<apex:page showHeader="false" sidebar="false" docType="html-5.0"
+<apex:page controller="RazorpayPageController" showHeader="false" sidebar="false" docType="html-5.0"
            contentType="text/html" standardStylesheets="false"
            applyHtmlTag="false">
 
@@ -11,10 +11,9 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const orderId = urlParams.get("orderId");
                 const amount = urlParams.get("amount");
-                const key = urlParams.get("key");
 
                 var options = {
-                    key: key,
+                    key: "{!razorpayKey}", // Injected securely from Apex
                     amount: parseInt(amount), // in paise
                     currency: "INR",
                     name: "Salesforce Payment",

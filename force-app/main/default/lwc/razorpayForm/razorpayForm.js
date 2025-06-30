@@ -11,7 +11,8 @@ export default class RazorpayForm extends LightningElement {
     async handlePay() {
         try {
             const payment = {
-                Amount__c: parseFloat(this.amount)
+                Amount__c: parseFloat(this.amount),
+                Name : 'Razorpay Payment'
             };
 
             const checkoutUrl = await createOrder({ payment });

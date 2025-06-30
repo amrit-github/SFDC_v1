@@ -12,7 +12,7 @@ public with sharing class RazorPayService {
         req.setHeader('Content-Type', 'application/json');
 
         Map<String, Object> payload = new Map<String, Object>{
-            'amount' => (Integer)(payment.Amount__c), // in paise
+            'amount' => (Integer)(payment.Amount__c * 100), // in paise
             'currency' => 'INR',
             'receipt' => payment.Name,
             'payment_capture' => true
@@ -30,8 +30,7 @@ public with sharing class RazorPayService {
             // Redirect URL (Razorpay Checkout Hosted Page)
             String vfPageUrl = URL.getOrgDomainUrl().toExternalForm() + '/apex/RazorpayCheckoutPage'
                          + '?orderId=' + order.id
-                         + '&amount=' + String.valueOf((Integer)(payment.Amount__c))
-                         + '&key=rzp_test_'; // Replace with your test key
+                         + '&amount=' + String.valueOf((Integer)(payment.Amount__c));
 
         return vfPageUrl;
         } else {
