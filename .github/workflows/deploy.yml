@@ -3,7 +3,7 @@ name: SFDC CI Deploy
 on:
   push:
     branches:
-      - master
+      - 
 
 jobs:
   deploy:
