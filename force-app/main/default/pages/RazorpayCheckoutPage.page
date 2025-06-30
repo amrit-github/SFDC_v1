@@ -29,6 +29,12 @@
                     },
                     theme: {
                         color: "#3399cc"
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            alert("❌ Payment Cancelled");
+                            window.close(); // closes the tab if user cancels
+                        }
                     }
                 };
 
