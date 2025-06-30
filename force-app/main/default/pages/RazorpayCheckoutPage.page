@@ -1,6 +1,5 @@
 <apex:page controller="RazorpayPageController" showHeader="false" sidebar="false" docType="html-5.0"
  contentType="text/html" standardStylesheets="false" applyHtmlTag="false">
-
     <html>
         <head>
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
